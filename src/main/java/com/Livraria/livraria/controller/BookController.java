@@ -1,9 +1,11 @@
 package com.Livraria.livraria.controller;
 
-import com.Livraria.livraria.DTOs.PublishBookDTO;
-import com.Livraria.livraria.DTOs.UpdateBookDTO;
+import com.Livraria.livraria.DTOs.book.PublishBookDTO;
+import com.Livraria.livraria.DTOs.book.UpdateBookDTO;
 import com.Livraria.livraria.entity.BookEntity;
+import com.Livraria.livraria.objectvalue.LiteraryGenreEnum;
 import com.Livraria.livraria.service.book.BookService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/author")
+@RequestMapping("/book")
 public class BookController {
 
     @Autowired
@@ -22,9 +24,15 @@ public class BookController {
         return this.bookService.getAllBooks();
     }
 
+    @GetMapping("/filter")
+    public List<BookEntity> filterByLiteraryGenre(@RequestParam(value = "gener") LiteraryGenreEnum literaryGenre) {
+        return this.bookService.filterByGenre(literaryGenre);
+    }
+
     @PostMapping
-    public ResponseEntity<String> publishBook(@RequestBody PublishBookDTO book) {
-        this.bookService.CreateNewBook(book);
+    public ResponseEntity<String> publishBook(@RequestBody PublishBookDTO book, HttpSession session) {
+        String jwt = (String) session.getAttribute("jwt");
+        this.bookService.CreateNewBook(book, jwt);
         return ResponseEntity.ok().body("Book posted successfully");
     }
 
@@ -41,3 +49,4 @@ public class BookController {
     }
 
 }
+

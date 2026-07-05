@@ -1,6 +1,7 @@
 package com.Livraria.livraria.repository.book;
 
 import com.Livraria.livraria.entity.BookEntity;
+import com.Livraria.livraria.objectvalue.LiteraryGenreEnum;
 import org.springframework.stereotype.Repository;
 
 import java.util.LinkedList;
@@ -18,7 +19,7 @@ public class BookRepository {
         return this.books;
     }
 
-    public int getLastUserId() {
+    public int getLastBookId() {
         return books.isEmpty() ? 1 : books.getLast().getId() + 1;
     }
 
@@ -28,6 +29,10 @@ public class BookRepository {
 
     public void deleteBook(int id) {
         this.books.removeIf(x -> x.getId() == id);
+    }
+
+    public List<BookEntity> filterByGenre(LiteraryGenreEnum literaryGenre) {
+        return this.books.stream().filter(x -> x.getLiteraryGenre() == literaryGenre).toList();
     }
 
 }
