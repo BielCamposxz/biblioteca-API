@@ -4,6 +4,7 @@ import com.Livraria.livraria.DTOs.book.PublishBookDTO;
 import com.Livraria.livraria.DTOs.book.UpdateBookDTO;
 import com.Livraria.livraria.entity.BookEntity;
 import com.Livraria.livraria.entity.UserEntity;
+import com.Livraria.livraria.exceptions.BookNotFound;
 import com.Livraria.livraria.infra.Security.TokenService;
 import com.Livraria.livraria.objectvalue.LiteraryGenreEnum;
 import com.Livraria.livraria.repository.book.BookRepository;
@@ -34,8 +35,8 @@ public class BookService {
     public void CreateNewBook(PublishBookDTO book, String token)
     {
         int id = this.bookRepository.getLastBookId();
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserEntity user = (UserEntity) auth.getPrincipal();
 
         this.bookRepository.saveBook(new BookEntity(
@@ -55,7 +56,7 @@ public class BookService {
         BookEntity book = bookRepository.getBookById(id);
 
         // retornar uma exception no futuro
-        if(book == null) return;
+        if(book == null) throw new BookNotFound();
         if(updateBookDTO.literaryGenre() != null) book.setLiteraryGenre(updateBookDTO.literaryGenre());
         if(updateBookDTO.description() != null) book.setDescription(updateBookDTO.description());
         if(updateBookDTO.title() != null) book.setTitle(updateBookDTO.title());
